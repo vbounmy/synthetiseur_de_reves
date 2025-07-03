@@ -74,15 +74,15 @@ def text_to_image(text):
         response.raise_for_status()
 
 
-if __name__ == "__main__":
-    audio_path = "../nlp_audio.m4a"
-    text = speech_to_text(audio_path, language="fr")
-    print("Transcription du rêve : ", text)
+# if __name__ == "__main__":
+#     audio_path = "../nlp_audio.m4a"
+#     text = speech_to_text(audio_path, language="fr")
+#     print("Transcription du rêve : ", text)
 
-    analysis = text_analysis(text)
-    print("Analyse émotionnelle : ", analysis)
+#     analysis = text_analysis(text)
+#     print("Analyse émotionnelle : ", analysis)
 
-    image_bytes = text_to_image(text)
-    with open("dream_image.png", "wb") as f:
-        f.write(image_bytes)
-    print("Image générée sauvegardée sous dream_image.png")
+#     image_bytes = text_to_image(text)
+#     with open("dream_image.png", "wb") as f:
+#         f.write(image_bytes)
+#     print("Image générée sauvegardée sous dream_image.png")
