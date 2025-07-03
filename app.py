@@ -1,7 +1,7 @@
 import streamlit as st
 from backend import speech_to_text, text_analysis, text_to_image
 
-st.title("Assistant de rêves : génération d'image 💤")
+st.title("Transformation d'un rêve en une image 💤")
 
 uploaded_audio = st.file_uploader("Charge un fichier audio (format .m4a, .wav...)", type=["m4a", "wav", "mp3"])
 
