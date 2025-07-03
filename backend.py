@@ -3,12 +3,20 @@ from mistralai import Mistral
 from dotenv import load_dotenv
 import os
 import json
+import math
+import requests
 
 load_dotenv()
 
 def read_file(text_file_path):
     with open(text_file_path, "r") as file:
         return file.read()
+    
+def softmax(predictions):
+    output = {}
+    for sentiment, predicted_value in predictions.items():
+        output[sentiment] = math.exp(predicted_value*10) / sum([math.exp(value*10) for value in predictions.values()])
+    return output
 
 # Open the audio file
 def speech_to_text(audio_path, language="fr"):
@@ -24,12 +32,10 @@ def speech_to_text(audio_path, language="fr"):
             language=language,  # Optional
             temperature=0.0  # Optional
         )
-        # To print only the transcription text, you'd use print(transcription.text) (here we're printing the entire transcription object to access timestamps)
         return transcription.text
 
 def text_analysis(text):
     client = Mistral(api_key = os.environ["MISTRAL_API_KEY"])
-
     chat_response = client.chat.complete(
         model="mistral-large-latest",
         messages=[
@@ -44,11 +50,39 @@ def text_analysis(text):
         ],
         response_format = {"type": "json_object"}
     )
+    predictions = json.loads(chat_response.choices[0].message.content)
+    return softmax(predictions)
 
-    print(chat_response.choices[0].message.content)
+def text_to_image(text):
+    api_key = os.environ.get("CLIPDROP_API_KEY")
+    if not api_key:
+        raise ValueError("La clé API ClipDrop n'est pas définie dans les variables d'environnement")
+
+    response = requests.post(
+        'https://clipdrop-api.co/text-to-image/v1',
+        files={
+            'prompt': (None, text, 'text/plain')
+        },
+        headers={
+            'x-api-key': api_key
+        }
+    )
+
+    if response.ok:
+        return response.content
+    else:
+        response.raise_for_status()
+
 
 if __name__ == "__main__":
     audio_path = "../nlp_audio.m4a"
     text = speech_to_text(audio_path, language="fr")
-    print(text)
+    print("Transcription du rêve : ", text)
+
     analysis = text_analysis(text)
+    print("Analyse émotionnelle : ", analysis)
+
+    image_bytes = text_to_image(text)
+    with open("dream_image.png", "wb") as f:
+        f.write(image_bytes)
+    print("Image générée sauvegardée sous dream_image.png")
