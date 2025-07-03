@@ -1,7 +1,7 @@
 import streamlit as st
 from backend import speech_to_text, text_analysis, text_to_image
 
-st.title("Assistant de rêves : génération d'image")
+st.title("Assistant de rêves : génération d'image 💤")
 
 uploaded_audio = st.file_uploader("Charge un fichier audio (format .m4a, .wav...)", type=["m4a", "wav", "mp3"])
 
@@ -19,8 +19,15 @@ if uploaded_audio is not None:
     
     with st.spinner("Analyse émotionnelle..."):
         analyse = text_analysis(texte)
-    st.subheader("Analyse émotionnelle :")
-    st.json(analyse)
+
+    # Trier les émotions par score décroissant
+    top_2 = sorted(analyse.items(), key=lambda x: x[1], reverse=True)[:2]
+
+    # Formatage en pourcentages
+    st.subheader("Top 2 émotions dominantes du rêve :")
+    for emotion, score in top_2:
+        st.write(f"**{emotion.capitalize()}** : {round(score * 100, 2)}%")
+
     
     with st.spinner("Génération de l'image..."):
         image_bytes = text_to_image(texte)
