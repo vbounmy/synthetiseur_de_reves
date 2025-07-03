@@ -1,7 +1,7 @@
 import streamlit as st
 from backend import speech_to_text, text_analysis, text_to_image
 
-st.title("Assistant de rêves : transcription, analyse émotionnelle et génération d'image")
+st.title("Assistant de rêves : génération d'image")
 
 uploaded_audio = st.file_uploader("Charge un fichier audio (format .m4a, .wav...)", type=["m4a", "wav", "mp3"])
 
@@ -14,8 +14,8 @@ if uploaded_audio is not None:
     
     with st.spinner("Transcription en cours..."):
         texte = speech_to_text(temp_file_name, language="fr")
-    st.subheader("Transcription du rêve :")
-    st.write(texte)
+    # st.subheader("Transcription du rêve :")
+    # st.write(texte)
     
     with st.spinner("Analyse émotionnelle..."):
         analyse = text_analysis(texte)
