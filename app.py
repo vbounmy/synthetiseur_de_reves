@@ -24,19 +24,27 @@ if uploaded_audio is not None:
     st.write(st.session_state.texte)
 
     # Analyse émotionnelle avec gestion d'erreur
-    if "analyse" not in st.session_state or st.button("🔁 Réanalyser le rêve"):
-        try:
-            with st.spinner("Analyse émotionnelle en cours..."):
-                st.session_state.analyse = text_analysis(st.session_state.texte)
-        except SDKError as e:
-            st.error(f"Erreur lors de l'analyse (API Mistral) : {str(e)}")
-            st.stop()
-        except Exception as e:
-            st.error(f"Erreur inattendue lors de l'analyse : {str(e)}")
-            st.stop()
+    def do_analysis():
+        with st.spinner("Analyse émotionnelle..."):
+            analyse = text_analysis(texte)
+            st.session_state.analyse = analyse
 
-    # Affichage des deux émotions principales
-    if "analyse" in st.session_state:
+    if "analyse" not in st.session_state or st.session_state.get("retry_analysis", False):
+        try:
+            do_analysis()
+            st.session_state.retry_analysis = False
+        except SDKError as e:
+            error_msg = str(e)
+            if "429" in error_msg or "capacity" in error_msg.lower():
+                st.error("Erreur 429 : capacité dépassée, veuillez réessayer.")
+                if st.button("Réessayer l'analyse émotionnelle"):
+                    st.session_state.retry_analysis = True
+                    st.experimental_rerun()
+            else:
+                st.error(f"Erreur lors de l'analyse (API Mistral) : {e}")
+                st.stop()
+
+    if "analyse" in st.session_state and not st.session_state.get("retry_analysis", False):
         top_2 = sorted(st.session_state.analyse.items(), key=lambda x: x[1], reverse=True)[:2]
         st.subheader("Top 2 émotions dominantes du rêve :")
         for emotion, score in top_2:
