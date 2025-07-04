@@ -48,7 +48,7 @@ def text_analysis(text):
                 "content": f"Analyse le texte ci-dessous (ta réponse doit être dans le format JSON) : {text}",
             },
         ],
-        response_format = {"type": "json_object"}
+        response_format = "json_object"
     )
     predictions = json.loads(chat_response.choices[0].message.content)
     return softmax(predictions)
