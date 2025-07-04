@@ -1,6 +1,7 @@
 from groq import Groq
 from mistralai import Mistral
 from dotenv import load_dotenv
+from mistralai.models.chat_completion import ResponseFormat
 import os
 import json
 import math
@@ -48,7 +49,7 @@ def text_analysis(text):
                 "content": f"Analyse le texte ci-dessous (ta réponse doit être dans le format JSON) : {text}",
             },
         ],
-        response_format = "json_object"
+        response_format = ResponseFormat.JSON_OBJECT
     )
     predictions = json.loads(chat_response.choices[0].message.content)
     return softmax(predictions)
