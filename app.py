@@ -26,7 +26,7 @@ if uploaded_audio is not None:
     # Analyse émotionnelle avec gestion d'erreur
     def do_analysis():
         with st.spinner("Analyse émotionnelle..."):
-            analyse = text_analysis(st.session_state.texte)  # <-- correction ici
+            analyse = text_analysis(st.session_state.texte)
             st.session_state.analyse = analyse
 
     if "analyse" not in st.session_state or st.session_state.get("retry_analysis", False):
