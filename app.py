@@ -14,8 +14,8 @@ if uploaded_audio is not None:
     
     with st.spinner("Transcription en cours..."):
         texte = speech_to_text(temp_file_name, language="fr")
-    # st.subheader("Transcription du rêve :")
-    # st.write(texte)
+    st.subheader("Transcription du rêve :")
+    st.write(texte)
     
     with st.spinner("Analyse émotionnelle..."):
         analyse = text_analysis(texte)
