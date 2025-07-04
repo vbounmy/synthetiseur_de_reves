@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit as st 
 from backend import speech_to_text, text_analysis, text_to_image
 from mistralai.models.sdkerror import SDKError
 
@@ -26,7 +26,7 @@ if uploaded_audio is not None:
     # Analyse émotionnelle avec gestion d'erreur
     def do_analysis():
         with st.spinner("Analyse émotionnelle..."):
-            analyse = text_analysis(texte)
+            analyse = text_analysis(st.session_state.texte)  # <-- correction ici
             st.session_state.analyse = analyse
 
     if "analyse" not in st.session_state or st.session_state.get("retry_analysis", False):
@@ -62,4 +62,5 @@ if uploaded_audio is not None:
     if "image" in st.session_state:
         st.subheader("Image générée du rêve :")
         st.image(st.session_state.image)
+
 
