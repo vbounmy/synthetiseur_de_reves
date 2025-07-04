@@ -44,11 +44,30 @@ if uploaded_audio is not None:
                 st.error(f"Erreur lors de l'analyse (API Mistral) : {e}")
                 st.stop()
 
+    # Affichage visuel complet de toutes les émotions
     if "analyse" in st.session_state and not st.session_state.get("retry_analysis", False):
-        top_2 = sorted(st.session_state.analyse.items(), key=lambda x: x[1], reverse=True)[:2]
-        st.subheader("Top 2 émotions dominantes du rêve :")
-        for emotion, score in top_2:
-            st.write(f"**{emotion.capitalize()}** : {round(score * 100, 2)}%")
+        st.subheader("Analyse émotionnelle complète du rêve :")
+
+        # Couleurs associées à chaque émotion (à ajuster si tu veux)
+        emotion_colors = {
+            "heureux": "#f4d35e",
+            "anxieux": "#4361ee",
+            "triste": "#720026",
+            "en_colere": "#ef233c",
+            "fatigue": "#999999",
+            "apeure": "#3a86ff",
+        }
+
+        # Affiche chaque émotion avec une barre et le pourcentage
+        for emotion, score in sorted(st.session_state.analyse.items(), key=lambda x: x[1], reverse=True):
+            color = emotion_colors.get(emotion, "#bbbbbb")
+            bar_html = f"""
+            <div style='background-color:#ddd; border-radius:5px; width:100%; height:20px; margin-bottom:8px;'>
+                <div style='background-color:{color}; width:{score*100}%; height:100%; border-radius:5px;'></div>
+            </div>
+            """
+            st.markdown(f"**{emotion.replace('_', ' ').capitalize()}** : {round(score * 100, 2)}%")
+            st.markdown(bar_html, unsafe_allow_html=True)
 
     # Génération d'image avec bouton de relance
     if "image" not in st.session_state or st.button("🔁 Régénérer l'image du rêve"):
@@ -62,5 +81,7 @@ if uploaded_audio is not None:
     if "image" in st.session_state:
         st.subheader("Image générée du rêve :")
         st.image(st.session_state.image)
+
+
 
 
